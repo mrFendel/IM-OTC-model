@@ -41,5 +41,8 @@ def update_smooth(state: np.ndarray,
 
     return update(state, P, z, H, R)
 
+# TODO: make smooth_batch
+# TODO: make cointegration_filtering
+
 
 

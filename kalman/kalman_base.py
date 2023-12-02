@@ -50,6 +50,7 @@ def update(state: np.ndarray,
     return state, P
 
 
+# TODO: refactor filter batch
 @nb.njit()
 def filter_batch(data: np.ndarray, data_variance: np.ndarray, init_state: np.ndarray, init_P: np.ndarray, H: np.ndarray):
     x = np.zeros_like(data+1)

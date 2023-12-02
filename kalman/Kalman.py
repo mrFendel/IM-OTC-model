@@ -34,7 +34,7 @@ class KF:
         x = x + K y - updated location
         P = (I - K H) * P - updated covariance
         """""
-        # TODO: refactor this function
+
         H = np.array((1, 0))
         z = np.array(meas_value)
         R = np.array(meas_variance)

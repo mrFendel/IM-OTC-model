@@ -42,24 +42,4 @@ def update_smooth(state: np.ndarray,
     return update(state, P, z, H, R)
 
 
-@nb.njit()
-def filter_batch(data: np.ndarray, data_variance: np.ndarray, init_state: np.ndarray, init_P: np.ndarray, H: np.ndarray):
-    x = np.zeros_like(data+1)
-    v = np.zeros_like(data+1)
-    x[0] = init_state[0]
-    v[0] = init_state[1]
-
-    state = init_state
-    P = init_P
-    for i in range(len(data)):
-        state, P = update(state=state,
-                          meas_value=data[i],
-                          meas_variance=data_variance[i],
-                          P=P,
-                          H=H)
-
-        x[i+1] = state[0]
-        v[i+1] = state[1]
-
-    return x, v
 

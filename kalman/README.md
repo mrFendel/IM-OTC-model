@@ -1,11 +1,3 @@
----
-tags:
-  - mustdo
-  - build
-  - quant
-  - num
-  - moex
----
 [CppMonk Tutorial](https://www.youtube.com/playlist?list=PLvKAPIGzFEr8n7WRx8RptZmC1rXeTzYtA)
 [HABR1](https://habr.com/ru/articles/166693/)
 [HABR](https://habr.com/ru/articles/140274/)

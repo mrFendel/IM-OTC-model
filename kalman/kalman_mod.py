@@ -1,46 +1,45 @@
 import numpy as np
 import numba as nb
+from kalman_base import*
 
 
 @nb.njit()
-def predict(state: np.ndarray, dt: float, accel_variance: float, P: np.ndarray):
+def predict_smooth(state: np.ndarray,
+                   P: np.ndarray,
+                   dt: float,
+                   accel_variance: float):
     """
-    x = F x
-    P = F P Ft + G Gt a
+    Hidden transition model: 
+    
+    X_{k+1} = X_{k} + V_k * dt + a * dt^2 / 2
+    V_{k+1} = V_{k} + a * dt
     """""
-    # P = np.eye(2)
+
     F = np.array(((1, dt),
                   (0, 1)))
     G = np.array((0.5 * dt ** 2, dt))
+    Q = G.dot(G.T) * accel_variance
 
-    state = F.dot(state)
-    P = F.dot(P).dot(F.T) + G.dot(G.T) * accel_variance
-    return state, P
+    return predict(state, P, F, Q)
 
 
 @nb.njit()
-def update(state: np.ndarray, meas_value: float, meas_variance: float, P: np.ndarray, H: np.ndarray):
+def update_smooth(state: np.ndarray,
+           P: np.ndarray,
+           meas_value: float,
+           meas_variance: float):
     """
-    y = z - H x - prediction error
-    S = H P Ht + R - covariance error
-    K = P Ht S^-1 - optimal Kalman step
-
-    x = x + K y - updated location
-    P = (I - K H) * P - updated covariance
+    Observation model:
+    
+    Z = H * X + e
+    H = [1  0]
     """""
 
-    # H = np.array((1, 0))
     z = np.array(meas_value)
+    H = np.array((1, 0))
     R = np.array(meas_variance)
 
-    y = z - H.dot(state)
-    S = H.dot(P).dot(H.T) + R
-
-    K = P.dot(H.T).dot(np.linalg.inv(S))
-
-    state = state + K.dot(y)
-    P = (np.eye(2) - K.dot(H)).dot(P)
-    return state, P
+    return update(state, P, z, H, R)
 
 
 @nb.njit()
@@ -63,3 +62,4 @@ def filter_batch(data: np.ndarray, data_variance: np.ndarray, init_state: np.nda
         v[i+1] = state[1]
 
     return x, v
+
